@@ -10,9 +10,7 @@ exports.getAllReviews = async(req, res) => {
         }
     const review = await Review.find(query)
     .populate("customer", "name email")
-    .populate("mamafua", "name email")
-    .populate("comment", "description")
-    .populate("rating", "number")
+    .populate("mamafua", "name email");
     res.json(review);
     } catch (error) {
         res.status(500).send(error)
@@ -40,7 +38,7 @@ exports.deleteReview = async(req, res) => {
         if(req.user.role !== "customer" || review.customer.toString() !== req.user.id){
             return res.status(403).json({message: "Only customers can delete a review"})
         }
-    await Booking.findByIdAndDelete(req.params.id);
+    await Review.findByIdAndDelete(req.params.id);
     res.json({ message: "Deleted"});
     } catch (error) {
         res.status(500).send(error)

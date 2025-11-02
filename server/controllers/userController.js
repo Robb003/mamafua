@@ -20,7 +20,12 @@ exports.getMyProfile = async(req, res) => {
 
  exports.updateMyProfile = async(req, res) => {
     try {
-        const user = await User.findByIdAndUpdate(req.user.id, req.body, {new: true, runValidators: true}).select("-password");
+        const allowedFields = ["name", "phoneNumber"];
+        const update = {};
+        allowedFields.forEach((field)=>{
+            if(req.body[field] !== undefined) update[field] = req.body[field];
+        });
+        const user = await User.findByIdAndUpdate(req.user.id, update, {new: true, runValidators: true}).select("-password");
         if(!user) return res.status(404).json({message: "user not found"});
         res.json(user);
     } catch (error) {
